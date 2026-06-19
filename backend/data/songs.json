@@ -14,5 +14,21 @@
     "image_url": "image2.jpg",
     "mood": "Sad",
     "language": "English"
+  },
+  {
+    "id": 3,
+    "name": "Telugu Happy Song",
+    "artist": "Sid Sriram",
+    "image_url": "telugu_happy.jpg",
+    "mood": "Happy",
+    "language": "Telugu"
+  },
+  {
+    "id": 4,
+    "name": "Telugu Sad Song",
+    "artist": "Devi Sri Prasad",
+    "image_url": "telugu_sad.jpg",
+    "mood": "Sad",
+    "language": "Telugu"
   }
 ]

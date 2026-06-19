@@ -30,28 +30,51 @@ exports.getSongs = (req, res) => {
 
 // Query iTunes search API for live, rich music tracks matching the UI needs
 exports.searchSongs = async (req, res) => {
+  const language = req.query.language;
+  const mood = req.query.mood;
   const q = req.query.q || "";
   try {
     const response = await axios.get(
       `https://itunes.apple.com/search?term=${encodeURIComponent(q)}&entity=song&limit=30`,
       { timeout: 5000 }
     );
-    res.json(response.data.results);
+    // Filter iTunes results by language and mood if provided (iTunes data may not contain these fields)
+    let filteredResults = response.data.results;
+    if (language) {
+      filteredResults = filteredResults.filter((song) =>
+        song.language ? song.language === language : true
+      );
+    }
+    if (mood) {
+      filteredResults = filteredResults.filter((song) =>
+        song.mood ? song.mood === mood : true
+      );
+    }
+    res.json(filteredResults);
   } catch (error) {
     console.error("iTunes API error:", error.message);
     // Fallback to local songs.json filtering
-    const filtered = songs.filter(
+    // Map local format to match expected iTunes properties, include language and mood for client‑side filtering
+    let filtered = songs.filter(
       (song) =>
         song.name.toLowerCase().includes(q.toLowerCase()) ||
         song.artist.toLowerCase().includes(q.toLowerCase())
     );
-    // Map local format to match expected iTunes properties
+    // Apply language and mood filters if provided
+    if (language) {
+      filtered = filtered.filter((s) => s.language === language);
+    }
+    if (mood) {
+      filtered = filtered.filter((s) => s.mood === mood);
+    }
     const mapped = filtered.map((s) => ({
       trackId: s.id,
       trackName: s.name,
       artistName: s.artist,
       artworkUrl100: s.image_url,
       previewUrl: "",
+      language: s.language,
+      mood: s.mood,
     }));
     res.json(mapped);
   }

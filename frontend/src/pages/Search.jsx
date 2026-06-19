@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import API from "../services/api";
+import FilterBar from "../components/FilterBar";
 import SongCard from "../components/SongCard";
-
 function Search({
   language,
   setCurrentTrack,
@@ -12,6 +12,7 @@ function Search({
   const [search, setSearch] = useState("");
   const [songs, setSongs] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [mood, setMood] = useState(""); // new mood filter state
 
   // Sync favorites on mount
   const fetchFavorites = async () => {
@@ -25,15 +26,31 @@ function Search({
 
   useEffect(() => {
     fetchFavorites();
-    // Default search matching selected language on load
+    // Load songs for the selected language (and current mood) on mount
     performSearch(`${language} popular`);
+    // Reset mood when language changes (optional)
+    // setMood("");
   }, [language]);
+
+  // Re‑run search whenever the selected mood changes (keeps the current term)
+  useEffect(() => {
+    if (search.trim()) {
+      performSearch(search);
+    } else {
+      // No explicit term – just reload default popular list with the new mood
+      performSearch(`${language} popular`);
+    }
+  }, [mood]);
 
   const performSearch = async (term) => {
     if (!term.trim()) return;
     setLoading(true);
     try {
-      const res = await API.get(`/songs/search?q=${encodeURIComponent(term)}`);
+      // Build query with optional mood filter
+      const q = encodeURIComponent(term);
+      const moodParam = mood ? `&mood=${encodeURIComponent(mood)}` : "";
+      const url = `/songs/search?q=${q}&language=${encodeURIComponent(language)}${moodParam}`;
+      const res = await API.get(url);
       setSongs(res.data);
     } catch (err) {
       console.error("Search failed:", err);
@@ -87,6 +104,8 @@ function Search({
     <div className="container search-container">
       <h2 className="section-title">🔍 Search Music</h2>
 
+      <FilterBar language={language} mood={mood} setMood={setMood} />
+      
       <form onSubmit={handleSearchSubmit} className="search-box">
         <input
           type="text"

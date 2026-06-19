@@ -1,8 +1,15 @@
 function SongCard({ song, isLiked, onLike, onPlay }) {
   const title = song.trackName || song.name || "Unknown Track";
   const artist = song.artistName || song.artist || "Unknown Artist";
-  // Convert 100x100 artwork URL to 300x300 for higher quality
-  let image = song.artworkUrl100 || song.imageUrl || "";
+  // Determine image URL: prioritize high‑resolution artwork, then image_url, then imageUrl, then placeholder
+  const placeholder = "https://via.placeholder.com/300";
+  const rawImage = song.artworkUrl100 || song.image_url || song.imageUrl || "";
+  // If rawImage is an absolute URL, use it; otherwise treat as a filename in the public folder
+  let image = rawImage && rawImage.startsWith("http")
+    ? rawImage
+    : rawImage
+    ? `/${rawImage}`
+    : placeholder;
   if (image && image.includes("100x100bb.jpg")) {
     image = image.replace("100x100bb.jpg", "300x300bb.jpg");
   }
