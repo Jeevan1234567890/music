@@ -1,0 +1,17 @@
+# Dependencies
+**/node_modules/
+node_modules/
+
+# Production builds
+**/dist/
+dist/
+
+# Local configuration and logs
+.env
+*.log
+backend/data/favorites.json
+frontend/public/hero_banner.png.bak
+
+# OS Metadata
+.DS_Store
+Thumbs.db

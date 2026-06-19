@@ -1,0 +1,18 @@
+[
+  {
+    "id": 1,
+    "name": "Happy",
+    "artist": "Pharrell Williams",
+    "image_url": "image.jpg",
+    "mood": "Happy",
+    "language": "English"
+  },
+  {
+    "id": 2,
+    "name": "Sad Songs",
+    "artist": "Marshmello",
+    "image_url": "image2.jpg",
+    "mood": "Sad",
+    "language": "English"
+  }
+]
