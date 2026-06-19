@@ -33,7 +33,8 @@ exports.searchSongs = async (req, res) => {
   const q = req.query.q || "";
   try {
     const response = await axios.get(
-      `https://itunes.apple.com/search?term=${encodeURIComponent(q)}&entity=song&limit=30`
+      `https://itunes.apple.com/search?term=${encodeURIComponent(q)}&entity=song&limit=30`,
+      { timeout: 5000 }
     );
     res.json(response.data.results);
   } catch (error) {
